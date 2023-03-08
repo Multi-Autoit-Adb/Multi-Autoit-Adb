@@ -19,6 +19,10 @@
 #include <GuiIPAddress.au3>
 #include <GuiMenu.au3>
 #include <Date.au3>
+#include <GUIScrollBars.au3>
+#include <ScrollBarConstants.au3>
+#include "GUIScrollbars_Size.au3"
+
 
 Opt("WinTitleMatchMode", 4) ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
 Opt("WinSearchChildren", 1) ;0=no, 1=search children also
@@ -77,7 +81,16 @@ Global $ValueData = Null
 Global $idMenuRemoveData = Null
 
 #Region ### START Koda GUI section ### Form=
-$FormMain = GUICreate("Multi AutoIT ADB", @DesktopWidth, @DesktopHeight, 0, 0, BitOR($GUI_SS_DEFAULT_GUI,$WS_VSCROLL))
+$FormMain = GUICreate("Multi AutoIT ADB", @DesktopWidth, @DesktopHeight, 0, 0,  BitOR($GUI_SS_DEFAULT_GUI,$WS_VSCROLL))
+
+$aRet = _GUIScrollbars_Size(0, $DevicesHeight, 300, 300)
+
+_GUIScrollBars_Init($FormMain)
+_GUIScrollBars_ShowScrollBar($FormMain, $SB_VERT, True)
+_GUIScrollBars_ShowScrollBar($FormMain, $SB_HORZ, False)
+_GUIScrollBars_SetScrollInfoPage($FormMain, $SB_VERT, $aRet[2])
+_GUIScrollBars_SetScrollInfoMax($FormMain, $SB_VERT, $aRet[3])
+
 $mEditmenu = GUICtrlCreateMenu("Option")
 $mScriptitem = GUICtrlCreateMenuItem("Script File", $mEditmenu )
 $mDisplayitem = GUICtrlCreateMenuItem("Display", $mEditmenu )
@@ -132,6 +145,8 @@ GUIRegisterMsg($WM_ACTIVATE, "WM_ACTIVATE")
 GUIRegisterMsg($WM_DEVICECHANGE, "WM_DEVICECHANGE")
 GUIRegisterMsg($WM_DESTROY, "WM_DESTROY")
 GUIRegisterMsg($WM_COPYDATA, "WM_COPYDATA_ReceiveData") ; register WM_COPYDATA
+GUIRegisterMsg($WM_VSCROLL, "_Scrollbars_WM_VSCROLL")
+
 GUISetState(@SW_SHOW)
 
 
@@ -584,7 +599,60 @@ EndFunc
 Func WM_DESTROY($hWnd, $iMsg, $wParam, $lParam)
 	Return $GUI_RUNDEFMSG
 EndFunc
+Func _Scrollbars_WM_VSCROLL($hWnd, $Msg, $wParam, $lParam)
 
+	#forceref $Msg, $wParam, $lParam
+	Local $nScrollCode = BitAND($wParam, 0x0000FFFF)
+	Local $iIndex = -1, $yChar, $yPos
+	Local $Min, $Max, $Page, $Pos, $TrackPos
+
+	For $x = 0 To UBound($__g_aSB_WindowInfo) - 1
+		If $__g_aSB_WindowInfo[$x][0] = $hWnd Then
+			$iIndex = $x
+			$yChar = $__g_aSB_WindowInfo[$iIndex][3]
+			ExitLoop
+		EndIf
+	Next
+	If $iIndex = -1 Then Return 0
+
+	Local $tSCROLLINFO = _GUIScrollBars_GetScrollInfoEx($hWnd, $SB_VERT)
+	$Min = DllStructGetData($tSCROLLINFO, "nMin")
+	$Max = DllStructGetData($tSCROLLINFO, "nMax")
+	$Page = DllStructGetData($tSCROLLINFO, "nPage")
+	$yPos = DllStructGetData($tSCROLLINFO, "nPos")
+	$Pos = $yPos
+	$TrackPos = DllStructGetData($tSCROLLINFO, "nTrackPos")
+
+	Switch $nScrollCode
+		Case $SB_TOP
+			DllStructSetData($tSCROLLINFO, "nPos", $Min)
+		Case $SB_BOTTOM
+			DllStructSetData($tSCROLLINFO, "nPos", $Max)
+		Case $SB_LINEUP
+			DllStructSetData($tSCROLLINFO, "nPos", $Pos - 1)
+		Case $SB_LINEDOWN
+			DllStructSetData($tSCROLLINFO, "nPos", $Pos + 1)
+		Case $SB_PAGEUP
+			DllStructSetData($tSCROLLINFO, "nPos", $Pos - $Page)
+		Case $SB_PAGEDOWN
+			DllStructSetData($tSCROLLINFO, "nPos", $Pos + $Page)
+		Case $SB_THUMBTRACK
+			DllStructSetData($tSCROLLINFO, "nPos", $TrackPos)
+	EndSwitch
+
+	DllStructSetData($tSCROLLINFO, "fMask", $SIF_POS)
+	_GUIScrollBars_SetScrollInfo($hWnd, $SB_VERT, $tSCROLLINFO)
+	_GUIScrollBars_GetScrollInfo($hWnd, $SB_VERT, $tSCROLLINFO)
+
+	$Pos = DllStructGetData($tSCROLLINFO, "nPos")
+	If ($Pos <> $yPos) Then
+		_GUIScrollBars_ScrollWindow($hWnd, 0, $yChar * ($yPos - $Pos))
+		$yPos = $Pos
+	EndIf
+
+	Return $GUI_RUNDEFMSG
+
+EndFunc   ;==>_Scrollbars_WM_VSCROLL
 Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 	#forceref $hWnd, $iMsg, $iwParam
     Local $hWndFrom, $iIDFrom, $iCode, $tNMHDR, $hWndListView, $tInfo
@@ -655,9 +723,7 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 		$RegExNonStandard="(?i)([^a-z0-9-_])"
 		$iDevice = StringRegExpReplace(_GUICtrlListView_GetItemText($aListDevices, $tStruct.item),$RegExNonStandard,"")
 		If _GUICtrlListView_GetItemChecked($aListDevices, $tStruct.item) Then
-			; Cần fix lại đoạn này Dùng trực tiếp PID Không cần check WinExists check PID
-			; Kiểm tra tồn tại trong collection  thì check PID hay không nếu tồn tại thì add và run 
-			; Nháy quá nhanh dẫn tới hiện tượng trùng
+
 			If Not $oDi.Exists($iDevice) Then
 				$oDi.Add($iDevice, 0)
 			EndIf
@@ -665,6 +731,7 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 				StartDevice($iDevice)
 			EndIf
 		Else
+			; BUG when close device multiroud
 			If $oDi.Exists($iDevice) And $oDi.Item($iDevice) <> 0 Then
 				If ProcessExists ($oDi.Item($iDevice)) Then
 				  ProcessClose($oDi.Item($iDevice))
@@ -789,16 +856,26 @@ EndFunc
 
 ;#DISPLAY ==============================================================
 Func OrderDisplay()
+	;Bug Maybe in Winmove
 	$aKeys = $oDi.Keys
+	$count = 0
 	For $aKey in $aKeys
-		$pos = getDevicePosition($aKey,$DevicesWidth,$DevicesHeight) 
+		;debug akey
+		$count = $count+1
+		$pos = getDevicePositionByPosition($aKey,$DevicesWidth,$DevicesHeight,$count)
+		;ConsoleWrite("0:"&$pos[0]&@CRLF)
+		;ConsoleWrite("1:"&$pos[1]&@CRLF)
 		$hWnd = _GetHwndFromPID($oDi.Item($aKey))
+		ConsoleWrite("$Key:"&$aKey&@CRLF)
+		ConsoleWrite("$hWnd:"&$hWnd&@CRLF)
 		$errorLog = WinMove($hWnd,"",$pos[0],$pos[1])
 		If @error Then
-			ConsoleWrite($errorLog)
-		EndIf			
+			ContinueLoop
+		Endif
+
 	Next	
 EndFunc
+
 Func LoadDeviceMenuLog()
 	GUICtrlDelete($idMenuDeviceLog)
 	$idMenuDeviceLog = GUICtrlCreateMenu("Device Log",$idButtoncontextProcessLog)
@@ -879,6 +956,12 @@ Func StartDevice($iDevice)
 	EndIf
 	
 	$pos = getDevicePosition("",$DevicesWidth,$DevicesHeight) 
+	
+	$aRet = _GUIScrollbars_Size(0, $pos[2] * $DevicesHeight, 300, 300)
+	_GUIScrollBars_SetScrollInfoPage($FormMain, $SB_VERT, $aRet[2])
+	_GUIScrollBars_SetScrollInfoMax($FormMain, $SB_VERT, $aRet[3])
+	
+	
 	$pos_x = $pos[0]
 	$pos_y = $pos[1]
 	; Ratiotion --------------------------------------------------------------
@@ -909,14 +992,15 @@ Func StartDevice($iDevice)
 EndFunc
 
 Func getDevicePosition($iDevice,$DevicesWidth,$DevicesHeight)
-	Dim $pos[2]
+	Dim $pos[3]
 	$ListDevicesTabWidth = Round(((@DesktopWidth) *20)/100)
 	$i=0
 	$aKeys = $oDi.Keys
-	$MaxDevicesInRows = Round((@DesktopWidth - $ListDevicesTabWidth + 20) / $DevicesWidth)
-	$displayDevicesNumber =  $oDi.Count 
+	$MaxDevicesInRows = Round((@DesktopWidth - $ListDevicesTabWidth ) / $DevicesWidth )-1
+	$displayDevicesNumber =  $oDi.Count
 	$RowPosition = Ceiling($displayDevicesNumber/$MaxDevicesInRows)
 	$totalRow = $RowPosition-1
+	
 	if $displayDevicesNumber <= $MaxDevicesInRows Then
 		$ColPosition = $displayDevicesNumber
 	Else
@@ -924,6 +1008,28 @@ Func getDevicePosition($iDevice,$DevicesWidth,$DevicesHeight)
 	EndIf
 	$pos[0] = ($ListDevicesTabWidth + 20) + ($ColPosition-1) *$DevicesWidth
 	$pos[1] = $DevicesHeight * $totalRow
+	$pos[2] = $totalRow
+	Return $pos
+EndFunc
+
+Func getDevicePositionByPosition($iDevice,$DevicesWidth,$DevicesHeight,$Count)
+	Dim $pos[3]
+	$ListDevicesTabWidth = Round(((@DesktopWidth) *20)/100)
+	$i=0
+	$aKeys = $oDi.Keys
+	$MaxDevicesInRows = Round((@DesktopWidth - $ListDevicesTabWidth ) / $DevicesWidth )-1
+	$displayDevicesNumber =  $Count
+	$RowPosition = Ceiling($displayDevicesNumber/$MaxDevicesInRows)
+	$totalRow = $RowPosition-1
+	
+	if $displayDevicesNumber <= $MaxDevicesInRows Then
+		$ColPosition = $displayDevicesNumber
+	Else
+		$ColPosition =  $displayDevicesNumber - ($totalRow*$MaxDevicesInRows)
+	EndIf
+	$pos[0] = ($ListDevicesTabWidth + 20) + ($ColPosition-1) *$DevicesWidth
+	$pos[1] = $DevicesHeight * $totalRow
+	$pos[2] = $totalRow
 	Return $pos
 EndFunc
 
@@ -1113,8 +1219,10 @@ EndFunc
 ;Feature : batch Function For ALL
 ;Feature : https://github.com/toilatester/sms-listener-service/blob/main/android/app/src/main/java/com/toilatester/sms/utils/ReadSMS.java -> rewrite app to read sms merge with sendsms
 ;Feature : Call Key value from config farent  ---- DO IT
-;Bug : Send data type done to child
 ;Feature : Run EXE file - prevent call from child app without parent
+;Bug : when more device sceen show it not bigger
+;Bug : After click turn off screen dislay flyaway
+;Bug : Send data type done to child (Done)
 ;Feature : A function call device name to script (Done)
 ;Feature : Select menu Script (Done)
 ;Feature : Send SMS script (Done)
