@@ -5,11 +5,11 @@
 Manipulate Android devices from any (supported) Window, even from another Android device.
 
 ## Features
-* 📁 Run Autoit Script for Devices
+* 📁 Manager File
 * 📋 Show Information
 *  🗑 Clear Cache 
 * 📷 Capture & record screen
-* 📜 Interactiv Shell
+* 📜 Run Autoit Script for Devices
 * 📦 Install APK
 * 🎥 [Scrcpy](https://github.com/Genymobile/scrcpy) compatible client (screen mirroring and controling device)
 * 🔌 Power and reboot to different modes
