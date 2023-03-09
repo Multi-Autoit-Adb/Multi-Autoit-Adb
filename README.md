@@ -16,6 +16,11 @@ Window application connects to Android via ADB and uses autoit language to progr
 
 [📋 Project Roadmap](https://github.com/yume-chan/ya-webadb/issues/348)
 
+## Demo
+![alt text](https://github.com/Multi-Autoit-Adb/Multi-Autoit-Adb/blob/main/document/main.png)
+![alt text](https://github.com/Multi-Autoit-Adb/Multi-Autoit-Adb/blob/main/document/view-script-example.png)
+![alt text](https://github.com/Multi-Autoit-Adb/Multi-Autoit-Adb/blob/main/document/select-script-example.png)
+![alt text](https://github.com/Multi-Autoit-Adb/Multi-Autoit-Adb/blob/main/document/demo-window-script.png)
 ## Contribute
 
 See [CONTRIBUTE.md](./CONTRIBUTE.md)
