@@ -21,7 +21,7 @@
 #include <Date.au3>
 #include <GUIScrollBars.au3>
 #include <ScrollBarConstants.au3>
-#include "GUIScrollbars_Size.au3"
+#include "lib/GUIScrollbars_Size.au3"
 
 
 Opt("WinTitleMatchMode", 4) ;1=start, 2=subStr, 3=exact, 4=advanced, -1 to -4=Nocase
@@ -731,7 +731,8 @@ Func WM_NOTIFY($hWnd, $iMsg, $wParam, $lParam)
 				StartDevice($iDevice)
 			EndIf
 		Else
-			; BUG when close device multiroud
+			; BUG when close device multi
+			
 			If $oDi.Exists($iDevice) And $oDi.Item($iDevice) <> 0 Then
 				If ProcessExists ($oDi.Item($iDevice)) Then
 				  ProcessClose($oDi.Item($iDevice))
@@ -861,18 +862,21 @@ Func OrderDisplay()
 	$count = 0
 	For $aKey in $aKeys
 		;debug akey
-		$count = $count+1
-		$pos = getDevicePositionByPosition($aKey,$DevicesWidth,$DevicesHeight,$count)
+
 		;ConsoleWrite("0:"&$pos[0]&@CRLF)
 		;ConsoleWrite("1:"&$pos[1]&@CRLF)
-		$hWnd = _GetHwndFromPID($oDi.Item($aKey))
-		ConsoleWrite("$Key:"&$aKey&@CRLF)
-		ConsoleWrite("$hWnd:"&$hWnd&@CRLF)
-		$errorLog = WinMove($hWnd,"",$pos[0],$pos[1])
-		If @error Then
-			ContinueLoop
-		Endif
-
+		ConsoleWrite("$Key:"&$oDi.Item($aKey)&@CRLF)
+		If $oDi.Item($aKey) <> "" Then
+			$count = $count+1
+			$pos = getDevicePositionByPosition($aKey,$DevicesWidth,$DevicesHeight,$count) ; "Notthing bug"
+			$hWnd = _GetHwndFromPID($oDi.Item($aKey)) ; Maybe bug here\
+			ConsoleWrite("$hWnd:"&$hWnd&@CRLF)
+			WinMove($hWnd,"",$pos[0],$pos[1])
+		EndIf
+		
+		;ConsoleWrite("$Key:"&$aKey&@CRLF)
+		
+		;WinMove($hWnd,"",$pos[0],$pos[1])
 	Next	
 EndFunc
 
@@ -896,9 +900,10 @@ Func LoadDeviceInformation()
 		If $found <> -1 Then
 		Else
 			$sDeviceName = _Android_GetDeviceName($aDevices[$i])
-			$sDeviceBatteryTemp = _Android_GetBatteryTemperature($aDevices[$i])
-			$sDeviceBatteryLevel = _Android_GetBatteryLevel($aDevices[$i])
-			$idViewItem = GUICtrlCreateListViewItem($aDevices[$i] & "|" & $sDeviceName[1] & " "&$sDeviceName[0] &"|" &$sDeviceBatteryTemp/10&" C | " & $sDeviceBatteryLevel  &"%|" ,$aListDevices)
+			;$sDeviceBatteryTemp = _Android_GetBatteryTemperature($aDevices[$i])
+			;$sDeviceBatteryLevel = _Android_GetBatteryLevel($aDevices[$i])
+			;$idViewItem = GUICtrlCreateListViewItem($aDevices[$i] & "|" & $sDeviceName[1] & " "&$sDeviceName[0] &"|" &$sDeviceBatteryTemp/10&" C | " & $sDeviceBatteryLevel  &"%|" ,$aListDevices)
+			$idViewItem = GUICtrlCreateListViewItem($aDevices[$i] & "|" & $sDeviceName[1] & " "&$sDeviceName[0] &"|"  ,$aListDevices)
 			
 		EndIf
 	Next	
