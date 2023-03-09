@@ -1222,6 +1222,7 @@ EndFunc
 ;Feature : Forward Call https://github.com/machinaeXphilip/adbController
 ;Feature : Forward Audio https://github.com/rom1v/sndcpy , VLC too large MB and maybe not forward
 ;Feature : batch Function For ALL
+;Feature : Write document about how script for adb work
 ;Feature : https://github.com/toilatester/sms-listener-service/blob/main/android/app/src/main/java/com/toilatester/sms/utils/ReadSMS.java -> rewrite app to read sms merge with sendsms (Done)
 ;Feature : Call Key value from config farent  ---- DO IT
 ;Feature : Run EXE file - prevent call from child app without parent
