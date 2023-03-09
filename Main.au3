@@ -917,14 +917,14 @@ Func LoadDeviceInformation()
 			Else
 				if $i < _GUICtrlListView_GetItemCount($aListDevices)   Then
 					_GUICtrlListView_DeleteItem($aListDevices, $i)
-					If $OpenModalDeviceName = $aDevicesListView[$i] Then
-							If WinExists("Device Information") = 1 And BitAND(WinGetState("Device Information"), 8) Then ; If Device Information exits & is active.
-								GUIDelete($InforDeviceForm)
-							EndIf
-							If WinExists("Config") = 1 And BitAND(WinGetState("Script"), 8) Then ; If Device Information exits & is active.
-								GUIDelete($ScriptConfigForm)
-							EndIf
-					EndIf
+					;If $OpenModalDeviceName = $aDevicesListView[$i] Then
+							;If WinExists("Device Information") = 1 And BitAND(WinGetState("Device Information"), 8) Then ; If Device Information exits & is active.
+								;GUIDelete($InforDeviceForm)
+							;EndIf
+							;If WinExists("Config") = 1 And BitAND(WinGetState("Script"), 8) Then ; If Device Information exits & is active.
+								;GUIDelete($ScriptConfigForm)
+							;EndIf
+					;EndIf
 				EndIf
 				
 	
@@ -1224,44 +1224,8 @@ EndFunc
 ;Feature : batch Function For ALL
 ;Feature : Write document about how script for adb work
 ;Feature : https://github.com/toilatester/sms-listener-service/blob/main/android/app/src/main/java/com/toilatester/sms/utils/ReadSMS.java -> rewrite app to read sms merge with sendsms (Done)
-;Feature : Call Key value from config farent  ---- DO IT
+;Feature : Call Key value from config farent  
 ;Feature : Run EXE file - prevent call from child app without parent
 ;Bug : 1 device only open 1 script
-;Bug : open display model error with file script 
-;Bug : when more device sceen show it not bigger (Done)
-;Bug : After click turn off screen dislay flyaway (DONE)
-;Bug : Send data type done to child (Done)
-;Feature : A function call device name to script (Done)
-;Feature : Select menu Script (Done)
-;Feature : Send SMS script (Done)
-;Feature :Menu exit (Done)
-;Bug : Fix crash Process failed to respond; forcing abrupt termination.(Done)
-;Bug: Check apk install (DONE)
-;Bug: Proxy save Button Next (Done)
-;Feature :Apps install (Done)
-;Bug :  Could not request to stay awake if control is disabled . Select No control and disbale stay Away (Done)
-;Feature :Menu - Config width height display mobile (Done)
-;Bug : New Devices cant connect usb network (Done)
-;Bug : Open duplicate form (DONE)
-;Feature : reboot , Shutdown(DONE)
-;Bug : Sometime dubplicate device tabs (DONE)
-;Config : Proxy ; (DONE)
-;Config : Connect network type (3g , USB , WIFI ) ; (DONE)
-;Bug : Sometime dubplicate device tabs (DONE)
-;Bug : Close Device Information Form when usb unpluged (DONE)
-;Feature : Stop script (DONE)
-;Feature :Load script in one devices (DONE)
-;Feature: Manager Process Script running |pID | Script | Device name | Usage Memory (DONE)
-;Feature :Check event WM_ USB plugin then update new device (DONE)
-;Feature :When USB plugin then load new device (DONE)
-;Bug : Get memory need to check error when cmd error not working ,  Device infomation ,battery same (DONE)
-;Bug : check Process failed to respond; forcing abrupt termination... CMD (Done)
-;Feature :Click to device show all infomation (Done)
-;Feature :Select script on config (Done)
-;Bug :  Load ramb (Done) 
-;Feature :Script Manager(Done)
-;Feature :Click device and show Config (DONE)
-;Bug : Click position 2 when click again it override another device in 1 one position (need resort device Func again after unselect device) (DONE)
-;Bug : Open too fast and close too fast error (DONE)
-;Feature :KIll all scrypy when app close (DONE)
-;Bug : select fast will clone device  (Check win Exist and Active) (DONE) 
+;Bug : open display model error with file script
+;Bug : When USB unplug Load device information it will exist , if not loaded yet then it will error --Do IT  
