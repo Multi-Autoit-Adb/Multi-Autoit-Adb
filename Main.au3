@@ -870,7 +870,7 @@ Func OrderDisplay()
 			$count = $count+1
 			$pos = getDevicePositionByPosition($aKey,$DevicesWidth,$DevicesHeight,$count) ; "Notthing bug"
 			$hWnd = _GetHwndFromPID($oDi.Item($aKey)) ; Maybe bug here\
-			ConsoleWrite("$hWnd:"&$hWnd&@CRLF)
+			;ConsoleWrite("$hWnd:"&$hWnd&@CRLF)
 			WinMove($hWnd,"",$pos[0],$pos[1])
 		EndIf
 		
@@ -1219,14 +1219,16 @@ EndFunc
 ;Feature : Manager File
 ;Feature : Record , Capture Script
 ;Feature : Service API
-;Feature : Forward Call 
+;Feature : Forward Call https://github.com/machinaeXphilip/adbController
 ;Feature : Forward Audio https://github.com/rom1v/sndcpy , VLC too large MB and maybe not forward
 ;Feature : batch Function For ALL
-;Feature : https://github.com/toilatester/sms-listener-service/blob/main/android/app/src/main/java/com/toilatester/sms/utils/ReadSMS.java -> rewrite app to read sms merge with sendsms
+;Feature : https://github.com/toilatester/sms-listener-service/blob/main/android/app/src/main/java/com/toilatester/sms/utils/ReadSMS.java -> rewrite app to read sms merge with sendsms (Done)
 ;Feature : Call Key value from config farent  ---- DO IT
 ;Feature : Run EXE file - prevent call from child app without parent
-;Bug : when more device sceen show it not bigger
-;Bug : After click turn off screen dislay flyaway
+;Bug : 1 device only open 1 script
+;Bug : open display model error with file script 
+;Bug : when more device sceen show it not bigger (Done)
+;Bug : After click turn off screen dislay flyaway (DONE)
 ;Bug : Send data type done to child (Done)
 ;Feature : A function call device name to script (Done)
 ;Feature : Select menu Script (Done)
