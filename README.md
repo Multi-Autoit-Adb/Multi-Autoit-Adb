@@ -2,7 +2,7 @@
 
 [![GitHub license](https://img.shields.io/github/license/yume-chan/ya-webadb)](https://github.com/yume-chan/ya-webadb/blob/main/LICENSE)
 
-Manipulate Android devices from any (supported) Window, even from another Android device.
+Window application connects to Android via ADB and uses autoit language to program applications on those devices
 
 ## Features
 * 📁 Manager File
