@@ -153,12 +153,47 @@ GUISetState(@SW_SHOW)
 #EndRegion ### END Koda GUI section ###
 
 While 1
-	$nMsg = GUIGetMsg()
+	$nMsg = GUIGetMsg(1)
 	LoadDisplay()
 	InitData()
-	Switch $nMsg
+	Switch $nMsg[0]
 	Case $GUI_EVENT_CLOSE
-		CloseWindowForm()
+		;CloseWindowForm()
+		If $nMsg[1] = $FormMain Then
+			GUISwitch($FormMain)
+			GUIDelete($FormMain)
+		EndIf
+		If $nMsg[1] = $InforDeviceForm Then
+			GUISwitch($InforDeviceForm)
+			GUIDelete($InforDeviceForm)
+		EndIf
+		
+		If $nMsg[1] = $ScriptManagerForm Then
+			GUISwitch($ScriptManagerForm)
+			GUIDelete($ScriptManagerForm)
+		EndIf
+		If $nMsg[1] = $InstallAppsForm Then
+			GUISwitch($InstallAppsForm)
+			GUIDelete($InstallAppsForm)
+		EndIf		
+		
+		If $nMsg[1] = $DisplayManagerForm Then
+			GUISwitch($DisplayManagerForm)
+			GUIDelete($DisplayManagerForm)
+		EndIf
+		
+		If $nMsg[1] = $ScriptConfigForm Then
+			GUISwitch($ScriptConfigForm)
+			GUIDelete($ScriptConfigForm)
+		EndIf			
+		
+		
+		If $nMsg[1] = $inputkeyvalueForm Then
+			GUISwitch($inputkeyvalueForm)
+			GUIDelete($inputkeyvalueForm)
+		EndIf
+		
+		
 	Case $mDisplayitem
 		DisplayManagerForm()
 	Case $mExititem
@@ -847,8 +882,8 @@ Func CloseWindowForm()
 		ElseIf WinExists("Input Key & Value") = 1 And BitAND(WinGetState("Input Key & Value"), 8) Then 
 			GUIDelete($inputkeyvalueForm)
 			$inputkeyvalueForm = Null
-		ElseIf WinExists("Multi AutoIT ADB") = 1 And BitAND(WinGetState("Multi AutoIT ADB"), 8) Then 
-			GUIDelete($FormMain)
+		ElseIf  WinExists("Multi AutoIT ADB") = 1 And BitAND(WinGetState("Multi AutoIT ADB"), 8) Then 
+			;GUIDelete($FormMain)
 		EndIf
 EndFunc
 
@@ -1226,6 +1261,7 @@ EndFunc
 ;Feature : https://github.com/toilatester/sms-listener-service/blob/main/android/app/src/main/java/com/toilatester/sms/utils/ReadSMS.java -> rewrite app to read sms merge with sendsms (Done)
 ;Feature : Call Key value from config farent  
 ;Feature : Run EXE file - prevent call from child app without parent
-;Bug : 1 device only open 1 script
+;Bug : 1 device only open 1 script -- DO IT
 ;Bug : open display model error with file script
 ;Bug : When USB unplug Load device information it will exist , if not loaded yet then it will error --Do IT  
+;Bug :Select about device , when it hasnt not load finist , click multi 3 click it will close implement (Done)
