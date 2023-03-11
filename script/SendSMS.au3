@@ -12,7 +12,7 @@ GUICtrlCreateLabel("Message:", 20, 40, 80)
 $Phonemessage = GUICtrlCreateEdit("", 80, 40, 130, 100)
 $SendSMS = GUICtrlCreateButton("Send", 50, 170, 200, 25)
 
-;Do unil getdata("finish")
+
 GUISetState (@SW_SHOW)
 
 GUIRegisterMsg($WM_COPYDATA, "WM_COPYDATA_ReceiveData") ; register WM_COPYDATA

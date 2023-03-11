@@ -203,11 +203,14 @@ While 1
 		SaveDisplaySetting()
 	Case $EventMenuScriptItem[0] To $EventMenuScriptItem[UBound($EventMenuScriptItem)-1]
 		$sAppClicked = _GUICtrlListView_GetItemText($aListDevices, Number(_GUICtrlListView_GetSelectedIndices($aListDevices)))
-		$x = $nMsg-$EventMenuScriptItem[0]+1
+		$x = $nMsg[0]-$EventMenuScriptItem[0]+1
 		Local $aFileList = _FileListToArray("script", "*",1)
-		$aProcessListView = _GUICtrlListView_GetItemsArray($aProcessScript,1)
+		$aProcessListView = _GUICtrlListView_GetItemsArray($aProcessScript,2)
+
 		UpdateScriptPid()
 		$found = _ArraySearch($aProcessListView,$aFileList[$x])
+		;Bug here
+		ConsoleWrite($found)
 		If $found = -1 Then
 			CreateProcRunScript($sAppClicked,$aFileList[$x])
 		Else
@@ -1178,13 +1181,16 @@ Func SendDataConfigToChild($hChild)
 EndFunc
 
 Func CreateProcRunScript($aDevice,$FileName)
+		
 		$File = @ScriptDir&"\script\"&$FileName
 		$pId = Run(@AutoItExe & ' /AutoIt3ExecuteScript ' & FileGetShortName($File))
 		$hChild = _GetHwndFromPID($pId); assign child hamdle
 		SendData($hChild,PackageData($aDevice))
 		;SEND PID to child process
 		GUICtrlCreateListViewItem($pId & "|" & $aDevice & "|" & $FileName &"  | " &  "Usaage" &"|" ,$aProcessScript)
-EndFunc
+		
+	EndFunc
+	
 Func PackageData($aDevice)
 		Local $iniDataPackage = ""
 		$iniData = IniReadSection($sFilePath,$OpenModalDeviceName)
@@ -1262,6 +1268,5 @@ EndFunc
 ;Feature : Call Key value from config farent  
 ;Feature : Run EXE file - prevent call from child app without parent
 ;Bug : 1 device only open 1 script -- DO IT
-;Bug : open display model error with file script
-;Bug : When USB unplug Load device information it will exist , if not loaded yet then it will error --Do IT  
-;Bug :Select about device , when it hasnt not load finist , click multi 3 click it will close implement (Done)
+;Bug : open display model error with file script (Multi)
+;Bug :Select about device , when it hasnt not load finish , click multi 3 click it will close implement (Done)
