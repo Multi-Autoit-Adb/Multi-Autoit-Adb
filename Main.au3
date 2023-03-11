@@ -206,12 +206,31 @@ While 1
 		$x = $nMsg[0]-$EventMenuScriptItem[0]+1
 		Local $aFileList = _FileListToArray("script", "*",1)
 		$aProcessListView = _GUICtrlListView_GetItemsArray($aProcessScript,2)
-
+		
+		$checkDevice = 0
+		If UBound($aProcessListView) > 0 Then
+			For $aProcessListItem in $aProcessListView
+				if StringReplace($aProcessListItem, " ", "") = $aFileList[$x] Then
+					$checkDevice = $checkDevice + 1
+				EndIf
+			Next
+		EndIf
+		
+		$aDeviceScript = _GUICtrlListView_GetItemsArray($aProcessScript,1)
+		If UBound($aDeviceScript) > 0 Then
+			For $aDeviceScriptItem in $aDeviceScript
+				if StringReplace($aDeviceScriptItem, " ", "") = $sAppClicked Then
+					ConsoleWrite($aDeviceScriptItem)
+					$checkDevice = $checkDevice + 1
+				EndIf
+			Next
+		EndIf
+		
+		
 		UpdateScriptPid()
 		$found = _ArraySearch($aProcessListView,$aFileList[$x])
 		;Bug here
-		ConsoleWrite($found)
-		If $found = -1 Then
+		If $checkDevice < 2 Then
 			CreateProcRunScript($sAppClicked,$aFileList[$x])
 		Else
 			MsgBox(0,"Oops","Please! Stop script before starting")
