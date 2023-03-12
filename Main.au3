@@ -192,7 +192,7 @@ While 1
 			GUISwitch($inputkeyvalueForm)
 			GUIDelete($inputkeyvalueForm)
 		EndIf
-		
+		CloseAll()
 		
 	Case $mDisplayitem
 		DisplayManagerForm()
@@ -1202,7 +1202,8 @@ EndFunc
 Func CreateProcRunScript($aDevice,$FileName)
 		
 		$File = @ScriptDir&"\script\"&$FileName
-		$pId = Run(@AutoItExe & ' /AutoIt3ExecuteScript ' & FileGetShortName($File))
+		$pId = Run('./lib/AutoIt3.exe' & ' /AutoIt3ExecuteScript ' & FileGetShortName($File))
+		ConsoleWrite(@AutoItExe)
 		$hChild = _GetHwndFromPID($pId); assign child hamdle
 		SendData($hChild,PackageData($aDevice))
 		;SEND PID to child process
@@ -1283,9 +1284,9 @@ EndFunc
 ;Feature : Forward Audio https://github.com/rom1v/sndcpy , VLC too large MB and maybe not forward
 ;Feature : batch Function For ALL
 ;Feature : Write document about how script for adb work
-;Feature : https://github.com/toilatester/sms-listener-service/blob/main/android/app/src/main/java/com/toilatester/sms/utils/ReadSMS.java -> rewrite app to read sms merge with sendsms (Done)
 ;Feature : Call Key value from config farent  
 ;Feature : Run EXE file - prevent call from child app without parent
-;Bug : 1 device only open 1 script -- DO IT
-;Bug : open display model error with file script (Multi)
+;Bug : 1 device only open 1 script -- (DONE)
+;Bug : open display model error with file script (Multi) 
 ;Bug :Select about device , when it hasnt not load finish , click multi 3 click it will close implement (Done)
+;Feature: rewrite app to read sms merge with sendsms (Done)
