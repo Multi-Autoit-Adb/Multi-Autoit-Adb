@@ -14,7 +14,7 @@ Window application connects to Android via ADB and uses autoit language to progr
 * 🎥 [Scrcpy](https://github.com/Genymobile/scrcpy) compatible client (screen mirroring and controling device)
 * 🔌 Power and reboot to different modes
 
-[📋 Project Roadmap](https://github.com/yume-chan/ya-webadb/issues/348)
+[📋 Project Roadmap]()
 
 ## Demo
 ![alt text](https://github.com/Multi-Autoit-Adb/Multi-Autoit-Adb/blob/main/document/main.png)
